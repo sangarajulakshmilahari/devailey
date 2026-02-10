@@ -74,6 +74,37 @@
     document.body.appendChild(banner);
   });
 
+  // Sidebar resizing
+  const resizer = document.getElementById('sidebarResizer');
+
+  if (resizer && sidebar) {
+    let isResizing = false;
+
+    resizer.addEventListener('mousedown', (e) => {
+      isResizing = true;
+      document.body.style.cursor = 'col-resize';
+      e.preventDefault();
+    });
+
+    document.addEventListener('mousemove', (e) => {
+      if (!isResizing) return;
+
+      const newWidth = e.clientX;
+
+      if (newWidth >= 200 && newWidth <= 480) {
+        sidebar.style.width = `${newWidth}px`;
+      }
+    });
+
+    document.addEventListener('mouseup', () => {
+      if (!isResizing) return;
+
+      isResizing = false;
+      document.body.style.cursor = 'default';
+    });
+  }
+
+
   // Utility functions
   function saveState() {
     try {
@@ -564,12 +595,14 @@ if (currentModeText) currentModeText.textContent = labels[mode];
 
     loadChatSessions();
 
-    if (currentSessionId && transcript.length > 0) {
-      restoreMessages();
-    } else if (transcript.length > 0) {
+    // If we have any transcript, restore it once. Otherwise show a single welcome message
+    if (transcript.length > 0) {
       restoreMessages();
     } else {
-      addSystemMessageToDOM('Welcome! Start a new conversation or select a previous chat.');
+      // Only add welcome message when the messages container is empty to avoid duplicates
+      if (!messagesContainer || messagesContainer.children.length === 0) {
+        addSystemMessageToDOM('Welcome! Start a new conversation or select a previous chat.');
+      }
     }
 
     if (messageInput) messageInput.focus();
@@ -661,7 +694,7 @@ if (currentModeText) currentModeText.textContent = labels[mode];
         setTokens(access, refresh, username);
 
         showChat();
-        setStatus(true, 'Signed in as ' + (state.username || 'User'));
+        // setStatus(true, 'Signed in as ' + (state.username || 'User'));
         addSystemMessageToDOM('Signed in successfully as ' + (state.username || 'User'));
       } else {
         throw new Error(data.error || 'Login failed');
@@ -1328,8 +1361,49 @@ if (currentModeText) currentModeText.textContent = labels[mode];
     });
   }
 
-  const newChatBtn = document.getElementById('newChatBtn');
-  if (newChatBtn) newChatBtn.addEventListener('click', startNewChat);
+  // Dropdown menu for new chat options
+  const newChatDropdownBtn = document.getElementById('newChatDropdownBtn');
+  const newChatDropdown = document.getElementById('newChatDropdown');
+  
+  if (newChatDropdownBtn) {
+    newChatDropdownBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      newChatDropdown.classList.toggle('hidden');
+    });
+  }
+
+  // Handle dropdown items
+  const dropdownItems = document.querySelectorAll('.dropdown-item');
+  if (dropdownItems) {
+    dropdownItems.forEach((item) => {
+      item.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const action = item.getAttribute('data-action');
+        
+        if (action === 'new-chat') {
+          startNewChat();
+        } else if (action === 'new-chat-editor') {
+          vscode.postMessage({
+            command: 'newChatEditor'
+          });
+        } else if (action === 'new-chat-window') {
+          vscode.postMessage({
+            command: 'newChatWindow'
+          });
+        }
+        
+        // Close dropdown
+        newChatDropdown.classList.add('hidden');
+      });
+    });
+  }
+
+  // Close dropdown when clicking outside
+  document.addEventListener('click', (e) => {
+    if (newChatDropdown && !newChatDropdown.contains(e.target) && newChatDropdownBtn && !newChatDropdownBtn.contains(e.target)) {
+      newChatDropdown.classList.add('hidden');
+    }
+  });
 
   const sidebarToggle = document.getElementById('sidebarToggle');
   if (sidebarToggle && sidebar) {

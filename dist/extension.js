@@ -11330,23 +11330,28 @@ function buildHtmlContent(nonce, logoUrl, scriptUri, styleUri) {
 }
 function getBodyContent(logoUrl) {
   return `<div class="app-container">
-    <!-- Sidebar -->
-    <div id="sidebar" class="sidebar hidden">
-      <div class="sidebar-header">
-        <span class="sidebar-title">Previous Chats</span>
-        <button id="newChatBtn" class="new-chat-btn">New Chat</button>
-      </div>
-      <div id="chatSessions" class="chat-sessions">
-        <div style="text-align: center; color: var(--muted); font-size: 12px; padding: 20px;">Loading conversations...</div>
-      </div>
-    </div>
-    
     <!-- Main Content -->
     <div class="main-content">
       <!-- Header -->
       <div class="header">
         <div class="brand">
-          <button id="sidebarToggle" class="sidebar-toggle">\u2630</button>
+          <div class="brand-actions-dropdown">
+            <button id="newChatDropdownBtn" class="new-chat-dropdown-btn" title="New chat options">
+              <i class="fa-solid fa-plus"></i>
+            </button>
+            <div id="newChatDropdown" class="new-chat-dropdown hidden">
+              <button class="dropdown-item" data-action="new-chat">
+                <span>New Chat</span>
+              </button>
+              <button class="dropdown-item" data-action="new-chat-editor">
+                <span>New Chat Editor</span>
+              </button>
+              <button class="dropdown-item" data-action="new-chat-window">
+                <span>New Chat Window</span>
+              </button>
+            </div>
+          </div>
+          
           <img src="${logoUrl}" alt="Devailey" class="brand-logo">
         </div>
         <div class="header-actions">
@@ -15957,6 +15962,16 @@ var DevAlleyPanel = class _DevAlleyPanel {
                 });
               }
               console.log(`[DevAlley] States sent - Mode: ${savedMode}, AutoCapture: ${this.autoCaptureEnabled}`);
+              break;
+            }
+            case "newChatEditor": {
+              console.log("[DevAlley] Opening new chat in editor");
+              await _DevAlleyPanel.createOrShow(this.context, false);
+              break;
+            }
+            case "newChatWindow": {
+              console.log("[DevAlley] Opening new chat in new window");
+              await _DevAlleyPanel.createOrShow(this.context, false);
               break;
             }
             default:

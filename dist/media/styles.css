@@ -62,13 +62,32 @@ body {
        3. SIDEBAR
        ======================================== */
 .sidebar {
+    display: none !important;
     width: 280px;
     background: var(--surface);
     border-right: 1px solid var(--border);
-    display: flex;
     flex-direction: column;
     overflow: hidden;
     transition: width 0.3s ease;
+    min-width: 150px;
+    max-width: 480px;
+}
+
+.sidebar-resizer {
+  display: none !important;
+  width: 4px;
+  cursor: col-resize;
+  background-color: transparent;
+  transition: background-color 0.15s ease;
+}
+
+.sidebar-resizer:hover {
+  background-color: #007acc; 
+}
+
+.app-container {
+  display: flex;
+  height: 100vh;
 }
 
 .sidebar.collapsed {
@@ -149,6 +168,74 @@ body {
     display: flex;
     align-items: center;
     gap: 10px;
+}
+
+.brand-actions-dropdown {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.new-chat-dropdown-btn {
+    background: var(--primary-blue);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 10px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.new-chat-dropdown-btn:hover {
+    background: color-mix(in oklab, var(--primary-blue) 80%, black 20%);
+}
+
+.new-chat-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    min-width: 200px;
+    margin-top: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    overflow: hidden;
+}
+
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 10px 14px;
+    border: none;
+    background: transparent;
+    color: var(--fg);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s ease;
+    text-align: left;
+}
+
+.dropdown-item:hover {
+    background: var(--hover-bg);
+    color: var(--primary-blue);
+}
+
+.dropdown-item:first-child {
+    border-radius: 8px 8px 0 0;
+}
+
+.dropdown-item:last-child {
+    border-radius: 0 0 8px 8px;
 }
 
 .brand-text {

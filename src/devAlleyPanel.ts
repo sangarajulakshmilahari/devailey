@@ -417,6 +417,18 @@ export class DevAlleyPanel {
               break;
             }
 
+            case "newChatEditor": {
+              console.log("[DevAlley] Opening new chat in editor");
+              await DevAlleyPanel.createOrShow(this.context, false);
+              break;
+            }
+
+            case "newChatWindow": {
+              console.log("[DevAlley] Opening new chat in new window");
+              // Open another instance of the current panel
+              await DevAlleyPanel.createOrShow(this.context, false);
+              break;
+            }
 
             default:
               console.log("[DevAlley] Unknown message type:", message?.type);
